@@ -50,5 +50,32 @@ Debido al error existe un defecto en el software al no actualizar la cantidad de
 - Fallo
 El usuario es capaz de intentar ingresar tantas veces como desee sin penalización por un exceso de fallos. 
 
-### 
+### ingreso con un usuario genérico
+```js
+import getData from './user.service.js';
 
+export default function authenticate(username, password) {
+    const users = getData();
+    console.log(users);
+    const user = users.find(user => user.username === username)
+    if (!user) {
+        return {
+            id: 0,
+            name: "Generic User",
+            username: username,
+            email: "usuario_generico@example.com",
+            password: password,
+            login_attempts: 0
+        };
+    }
+    ...
+    return user;
+
+```
+Para este error se está generando un usuario genérico si el usuario no existe en la base de datos, este usuario tiene el mismo nivel de acceso que un usuario registrado por lo que se está presentando un defecto al ingresar como: 'usuario_generico@example.com'.
+
+- Defecto
+No debería existir un un usuario genérico que permita el ingreso con el mismo nivel de acceso sin un registro previo.
+
+- Fallo
+Si se ingresa al login con un usuario genérico no existe necesidad de registrarse, por lo tanto, se puede comprometer la seguridad y la integridad del sistema, ya que se está permitiendo el acceso a usuarios que ni siquiera existen en la base de datos. Esto puede llevar a riesgos de seguridad, como el acceso no autorizado a recursos o datos sensibles.
